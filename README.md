@@ -1,7 +1,7 @@
 # DjangoWebService
 Вы говорили, что можно выбрать себе проект, который не будет использовать те же инструменты, но реализует себе схожий функционал. Так как я не очень хочу заниматься Java и Rest API я решил изучать Django.
 
-![MarineGEO circle logo]("https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Home_page/basic-django.png")
+![Alt text](https://assets.digitalocean.com/articles/alligator/boo.svg](https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Home_page/basic-django.png "a title")
 
 
 ДЗ по информатике:
