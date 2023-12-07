@@ -1,50 +1,47 @@
 from django.shortcuts import render
-from .models import Book, Author, BookInstance, Genre
+from .models import Thread, Post
 from django.views import generic
-
-
+from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
 def index(request):
     """
     Функция отображения для домашней страницы сайта.
     """
     # Генерация "количеств" некоторых главных объектов
-    num_books=Book.objects.all().count()
-    num_instances=BookInstance.objects.all().count()
+    num_themes=Thread.objects.all().count()
     # Доступные книги (статус = 'a')
-    num_instances_available=BookInstance.objects.filter(status__exact='a').count()
-    num_authors=Author.objects.count()  # Метод 'all()' применён по умолчанию.
-    message = "Запроса не было"
     # Отрисовка HTML-шаблона index.html с данными внутри
     # переменной контекста context
     return render(
         request,
         'index.html',
-        context={'num_books':num_books,'num_instances':num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors, 'message': message},
+        context={'num_themes':num_themes,},
     )
 
-
-def message(request):
-    """
-    Функция отображения для домашней страницы сайта.
-    """
-    # Генерация "количеств" некоторых главных объектов
-    num_books=Book.objects.all().count()
-    num_instances=BookInstance.objects.all().count()
-    # Доступные книги (статус = 'a')
-    num_instances_available=BookInstance.objects.filter(status__exact='a').count()
-    num_authors=Author.objects.count()  # Метод 'all()' применён по умолчанию.
-    message = "Я Фёдор, могу обрабатывать URL запрос message (massage :-)))!"
-    # Отрисовка HTML-шаблона index.html с данными внутри
-    # переменной контекста context
-    return render(
-        request,
-        'index.html',
-        context={'num_books':num_books,'num_instances':num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors, 'message': message},
-    )
     
 
-class BookListView(generic.ListView):
-    model = Book
 
-class AuthorsListView(generic.ListView):
-    model = Author
+def show_thread(request, thread_slug):
+    post = get_object_or_404(Thread, slug=thread_slug)
+class ThreadListView(ListView):
+    model = Thread
+
+class ThreadDetailView(DetailView):
+    model = Thread
+
+class CreateThreadView(CreateView):
+    model = Thread
+    fields = ['title']
+    success_url = reverse_lazy('thread_list')
+
+class CreatePostView(CreateView):
+    model = Post
+    fields = ['content']
+    
+    def form_valid(self, form):
+        form.instance.thread_id = self.kwargs['pk']
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('thread_detail', kwargs={'pk': self.kwargs['pk']})
